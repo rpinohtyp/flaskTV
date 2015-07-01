@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+{% if session.logged_in %}
+    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <dl>
+        <dt>Title:
+        <dd><input type=text size=30 name=title>
+        <dt>Text:
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd><input type=submit value=add>
+      </dl>
+    </form>
+{% endif %}
+
+    {% if session.logged_in %}
+        {% for entry in entries %}
+            <li><h4>{{ entry.title }}<a href="{{ url_for('edit') }}">edit</a></h4>
+            <p>{{ entry.text|safe }}</p>
+            <hr />
+        {% else %}
+        <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+    {% else %}
+        {% for entry in entries %}
+            <li><h4>{{ entry.title }}</h4>
+            <p>{{ entry.text|safe }}</p>
+            <hr />
+        {% else %}
+        <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+    {% endif %}
+
+
+
+<script type=text/javascript>
+$(function(){
+    $("h4").click(function() {
+        $(this).nextUntil("hr").slideToggle(400).end().find('span').toggle();
+    }).nextUntil("hr").hide();
+});
+</script>
+
+
+{% endblock %}
