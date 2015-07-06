@@ -39,14 +39,20 @@ def teardown_request(exception):
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select title, text from entries order by id desc')
-    entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
+    cur = g.db.execute('select id, title, text from entries order by id desc')
+    entries = [dict(nr=row[0], title=row[1], text=row[2]) for row in cur.fetchall()]
     #entries = dict(title='ZDF', text='ZDF VOD')
     return render_template('show_entries.html', entries=entries)
 
-@app.route('/edit')
+@app.route('/edit', methods=['GET', 'POST'])
 def edit():
-    return render_template('edit.html')
+    if request.method == 'POST':
+        g.db.execute('update entries set title=?, text=? where id=?', [request.form['title'], request.form['text'], request.form['record']])
+        g.db.commit()
+        #flash('entry was successfully edited')
+        return redirect(url_for('show_entries'))
+    else:
+        return render_template('edit.html')
 
 
 @app.route('/add', methods=['POST'])
@@ -58,12 +64,6 @@ def add_entry():
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
-
-@app.route('/_add_numbers')
-def add_numbers():
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
 
 @app.route('/test')
 def test():

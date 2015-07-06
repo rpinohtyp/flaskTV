@@ -1,3 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
+{% if session.logged_in %}
+    <form action="{{ url_for('edit') }}" method=post class=edit>
+      <dl>
+        <dt>record:
+        <dd><input type=text size=30 name=record>
+        <dt>Title:
+        <dd><input type=text size=30 name=title>
+        <dt>Text:
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd><input type=submit value=edit>
+      </dl>
+    </form>
+{% endif %}
 {% endblock %}
